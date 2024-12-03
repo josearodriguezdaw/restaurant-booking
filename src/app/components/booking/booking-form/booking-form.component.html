@@ -1,0 +1,54 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form>
+                <div class="form-group">
+                    <label for="client">Nombre del cliente:</label>
+                    <input type="text" class="form-control is-invalid" id="client">
+                    <div class="invalid-feedback">
+                        <small>Debe indicar el nombre del cliente.</small> <br>
+                        <small>El nombre del cliente no puede estar vacío</small> <br>
+                        <small>El nombre del cliente no puede tener más de 50 caracteres</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Número de Teléfono:</label>
+                    <input type="text" class="form-control  is-invalid" id="phone">
+                    <div  class="invalid-feedback">
+                        <small>Debe indicar un número de teléfono.</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control is-invalid" id="email">
+                    <div  class="invalid-feedback">
+                        <small>Debe indicar un email.</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="persons">Número de comensales:</label>
+                    <input type="numer" class="form-control is-invalid" id="persons">
+                    <div  class="invalid-feedback">
+                        <small>El número de comensales debe ser mayor que 0.</small> <br>
+                        <small>El número de comensales debe ser menor que 50.</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Nota:</label>
+                    <input type="textarea" row="1" class="form-control is-invalid" id="notes">
+                    <div  class="invalid-feedback">
+                        <small>La longitud de la nota no puede superar los 240 caracteres.</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="date">Fecha reserva:</label>
+                    <input type="datetime-local" row="1" class="form-control is-invalid" id="date">
+                    <div  class="invalid-feedback">
+                        <small>Debe indicar una fecha para la reserva.</small>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+</div>
