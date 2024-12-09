@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Booking, BookingStatus } from '../models/booking.model';
+import { filter } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,15 +21,75 @@ export class BookingService {
       new Booking( 10, "Elena Ruiz", "+34 600 445 566", "elena.ruiz@example.com", 6, "Mesa con buena iluminación para fotos.", new Date("2024-12-28T20:30:00"), new Date("2024-12-03T12:40:00"),BookingStatus.CONFIRM )]
    }
 
+   /**
+    * Devuelve todas las reservas existentes.
+    * @returns listado de reservas
+    */
    getBookings():Booking[]{
     return this.bookings;
    }
 
-   
+   /**
+    * Borra una reserva existente.
+    * @param bookingId identificador de la reserva a borrar.
+    */
    remove(bookingId:number){
     this.bookings = this.bookings.filter((booking:Booking)=>{
       return bookingId != booking.id;
     });
+    
+   }
+
+/**
+ * Busca una reserva por su identificador
+ * @param id identificador búsqueda
+ * @returns una reserva o null si no existe
+ */
+   getById(id:number):{data:Booking|null,index:number|null}{
+    let res:{data:Booking|null,index:number|null} = {data:null,index:null}
+    this.bookings.forEach((booking:Booking,index:number)=>{
+        if (id==booking.id){
+          res={data:booking,index:index}
+        }  
+    });
+    return res;
+   }
+
+
+   /**
+    * Crea una nueva reserva o edita una reserva existente.
+    * @param booking reserva a guardar o editar
+    */
+   saveBooking(booking:Booking){
+
+    let filterByid = this.getById(booking.id);
+
+
+    if(filterByid.data){
+      //Edita reserava
+      if (filterByid.index && filterByid.data){
+        //Modificamos la reserva
+
+        let oldBooking = filterByid.data;
+
+        // Le establecemos a la reserva creada a partir de la edición los 
+        // parámetros que no han sido modificados en el formulario
+        booking.dateCreation = oldBooking.dateCreation
+        booking.status = oldBooking.status
+
+
+        this.bookings[filterByid.index] = booking
+      }
+    }else{
+        //Crear nueva reserva
+        let idRandom = Math.trunc((Math.random()*1000))
+
+        //Modificamos el id, que es 0, a un id random
+        booking.id = idRandom;
+        
+        //Lo añadimos al arreglo
+        this.bookings.push(booking);
+      }
    }
 
 }
