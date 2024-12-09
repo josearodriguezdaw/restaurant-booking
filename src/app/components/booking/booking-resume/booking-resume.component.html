@@ -1,13 +1,13 @@
-<div class="card">
-    <div class="card-header">
-        <p class="card-text">Reserva BOOKING.STATUS  para BOOKING.PERSONS personas el día BOOKING.DATE</p>
-    </div>
-    <div class="card-body">
-      <h5 class="card-title">BOOKING.CLIENT - BOOKING.PHONE</h5>
-      <p class="card-text">Email: BOOKING.EMAIL</p>
-      <p class="card-text">Nº personas: BOOKING.PERSONS</p>
-      <p class="card-text">Notas del cliente: BOOKING.NOTES</p>
-      <button class="btn btn-primary">Modificar reserva</button>
-      <button class="btn btn-primary">Borrar reserva</button>
-    </div>
+<div class="card" *ngIf="bookingInput!=null">
+  <div class="card-header">
+      <p class="card-text">Reserva {{bookingInput.status}}  para {{bookingInput.persons}} personas el día {{bookingInput.date}}</p>
   </div>
+  <div class="card-body">
+    <h5 class="card-title">{{bookingInput.client}} - {{bookingInput.phone}}</h5>
+    <p class="card-text">Email: {{bookingInput.email}}</p>
+    <p class="card-text">Nº personas: {{bookingInput.persons}}</p>
+    <p class="card-text">Notas del cliente:{{bookingInput.notes}}</p>
+    <a class="btn btn-primary">Modificar reserva</a>
+    <a  class="btn btn-primary">Borrar Reserva</a>
+  </div>
+</div>

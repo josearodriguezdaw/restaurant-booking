@@ -1,3 +1,9 @@
 <app-header></app-header>
 
+<ng-container *ngFor="let booking of getBookings()">
+
+    <app-booking-resume [bookingInput]="booking"></app-booking-resume>
+
+</ng-container>
+
 <app-footer></app-footer>

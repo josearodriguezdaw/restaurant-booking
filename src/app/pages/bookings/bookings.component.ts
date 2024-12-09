@@ -1,15 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { BookingService } from '../../services/booking.service';
+import { Booking } from '../../models/booking.model';
+import { BookingResumeComponent } from '../../components/booking/booking-resume/booking-resume.component';
 
 @Component({
   selector: 'app-bookings',
   standalone: true,
-  imports: [CommonModule, HeaderComponent,FooterComponent],
+  imports: [CommonModule, HeaderComponent,FooterComponent,BookingResumeComponent],
   templateUrl: './bookings.component.html',
   styleUrl: './bookings.component.css'
 })
-export class BookingsComponent {
+export class BookingsComponent implements OnInit {
+  
+  bookingList:Booking[] =[];
+
+  constructor(private boookingService:BookingService){}
+
+  ngOnInit(): void {
+    this.bookingList = this.getBookings();
+  }
+
+  getBookings(){
+    return this.boookingService.getBookings();
+  }
+
 
 }

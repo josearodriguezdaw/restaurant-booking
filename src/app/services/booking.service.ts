@@ -19,4 +19,9 @@ export class BookingService {
       new Booking( 9, "Pablo Vega", "+34 600 334 455", "pablo.vega@example.com", 3, "Desea silla para bebé.", new Date("2024-12-26T18:45:00"), new Date("2024-12-01T17:30:00"),BookingStatus.PENDING ),
       new Booking( 10, "Elena Ruiz", "+34 600 445 566", "elena.ruiz@example.com", 6, "Mesa con buena iluminación para fotos.", new Date("2024-12-28T20:30:00"), new Date("2024-12-03T12:40:00"),BookingStatus.CONFIRM )]
    }
+
+   getBookings():Booking[]{
+    return this.bookings;
+   }
+
 }
