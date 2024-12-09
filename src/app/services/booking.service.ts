@@ -65,9 +65,9 @@ export class BookingService {
     let filterByid = this.getById(booking.id);
 
 
-    if(filterByid.data){
+    if(filterByid.data !=null){
       //Edita reserava
-      if (filterByid.index && filterByid.data){
+      if (filterByid.index !=null){
         //Modificamos la reserva
 
         let oldBooking = filterByid.data;

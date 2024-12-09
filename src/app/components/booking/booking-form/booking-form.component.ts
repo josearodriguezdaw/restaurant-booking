@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BookingService } from '../../../services/booking.service';
 import { Booking, BookingStatus } from '../../../models/booking.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-booking-form',
@@ -12,11 +12,11 @@ import { Router } from '@angular/router';
   templateUrl: './booking-form.component.html',
   styleUrl: './booking-form.component.css'
 })
-export class BookingFormComponent {
+export class BookingFormComponent implements OnInit{
 
   bookingForm:FormGroup;
 
-  constructor(formBuilder:FormBuilder, private bookingService:BookingService, private router:Router){
+  constructor(formBuilder:FormBuilder, private bookingService:BookingService, private activeRoute:ActivatedRoute,private router:Router){
     this.bookingForm = formBuilder.group({
       'id': ['', []],
       'client': ['', [Validators.required,Validators.minLength(0),Validators.maxLength(50)]],
@@ -25,6 +25,29 @@ export class BookingFormComponent {
       'persons': ['', [Validators.min(1),Validators.max(50)]],
       'notes': ['', [Validators.maxLength(240)]],
       'date': ['', [Validators.required]],
+    });
+  }
+
+  ngOnInit(): void {
+    this.activeRoute.paramMap.subscribe(params => {
+      let strId:string|null = params.get('id');
+      if (strId!=null){
+        let id = parseInt(strId);
+
+        let findBooking = this.bookingService.getById(id);
+        if(findBooking.data){
+          let booking = findBooking.data;
+          this.bookingForm.setValue({
+            'id': booking.id,
+            'client': booking.client,
+            'phone': booking.phone,
+            'email': booking.email,
+            'persons': booking.persons,
+            'notes': booking.notes,
+            'date': booking.getDateForm(),
+          });
+        }
+      }
     });
   }
 
