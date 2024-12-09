@@ -8,6 +8,6 @@
     <p class="card-text">Nº personas: {{bookingInput.persons}}</p>
     <p class="card-text">Notas del cliente:{{bookingInput.notes}}</p>
     <a class="btn btn-primary">Modificar reserva</a>
-    <a  class="btn btn-primary">Borrar Reserva</a>
+    <a  class="btn btn-primary" (click)="removeBooking(bookingInput.id)">Borrar Reserva</a>
   </div>
 </div>

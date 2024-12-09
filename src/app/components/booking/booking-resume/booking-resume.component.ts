@@ -16,4 +16,7 @@ export class BookingResumeComponent {
 
   constructor(private bookingService:BookingService){}
 
+  removeBooking(bookingId:number):void{
+    this.bookingService.remove(bookingId);
+  }
 }

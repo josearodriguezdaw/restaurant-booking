@@ -24,4 +24,11 @@ export class BookingService {
     return this.bookings;
    }
 
+   
+   remove(bookingId:number){
+    this.bookings = this.bookings.filter((booking:Booking)=>{
+      return bookingId != booking.id;
+    });
+   }
+
 }
