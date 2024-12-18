@@ -20,7 +20,7 @@ export class BookingsComponent implements OnInit {
   constructor(private boookingService:BookingService){}
 
   ngOnInit(): void {
-    this.boookingService.getAllBookings().subscribe(data =>{
+    this.boookingService.getAllBookings().subscribe((data:Booking[]) =>{
       this.bookingList = data;
     })
   }

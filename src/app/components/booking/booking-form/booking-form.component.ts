@@ -32,9 +32,8 @@ export class BookingFormComponent implements OnInit{
 
   ngOnInit(): void {
     this.activeRoute.paramMap.subscribe(params => {
-      let strId:string|null = params.get('id');
-      if (strId!=null){
-        let id = parseInt(strId);
+      let id:string|null = params.get('id');
+      if (id!=null && id.trim()!="" && id!="0"){
         this.bookingService.getById(id).then((data:DataSnapshot)=>{
           if(data.exists()){
             let booking:Booking = data.val();
@@ -46,7 +45,7 @@ export class BookingFormComponent implements OnInit{
               'email': booking.email,
               'persons': booking.persons,
               'notes': booking.notes,
-              'date': this.bookingService.getDateForm(booking.date),
+              'date': booking.date,
             });
           }
         })
@@ -64,9 +63,8 @@ export class BookingFormComponent implements OnInit{
       let persons = this.bookingForm.get("persons")?.value;
       let notes = this.bookingForm.get("notes")?.value;
       let date = this.bookingForm.get("date")?.value;
-      let idNumber = Number.parseFloat(id);
       
-      let booking = new Booking(idNumber,client,phone,email,Number.parseFloat(persons),notes,new Date(date),new Date(), BookingStatus.PENDING);
+      let booking = new Booking(id,client,phone,email,Number.parseFloat(persons),notes,date,new Date().toLocaleDateString(), BookingStatus.PENDING);
       this.bookingService.saveBooking(booking).then(()=>{
         this.router.navigate(["/bookings"]);
       }).catch(()=>{

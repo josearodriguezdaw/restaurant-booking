@@ -1,9 +1,9 @@
 export enum BookingStatus{
-    CONFIRM,
-    PENDING
+    CONFIRM="CONFIRM",
+    PENDING="PENDING"
 }
 export class Booking {
-    id:number;
+    id:string;
     client:string;
     phone: string;
     email:string;
@@ -13,7 +13,7 @@ export class Booking {
     dateCreation:string;
     status:BookingStatus
 
-    constructor (id:number,client:string,phone:string,email:string,persons:number,notes:string,datetimeBooking:string,dateCreation:string,status:BookingStatus){
+    constructor (id:string,client:string,phone:string,email:string,persons:number,notes:string,datetimeBooking:string,dateCreation:string,status:BookingStatus){
         this.id = id;
         this.client = client;
         this.phone = phone;
@@ -24,8 +24,18 @@ export class Booking {
         this.dateCreation = dateCreation;
         this.status = status
     }
-    get getStatus(){
-        return this.status == BookingStatus.CONFIRM ? "Confirmada" : "Pendiente";
+    getStatus(){
+        return this.status == "CONFIRM" ? "Confirmada" : "Pendiente";
     }
-
+    
+    getDateForm():string{
+        let date = new Date(this.date);
+        let day = date.getDate().toString().padStart(2, '0');;
+        let month = (date.getMonth()+1).toString().padStart(2, '0');;
+        let year = date.getFullYear();
+        let hour = date.getHours().toString().padStart(2, '0');
+        let minutes = date.getMinutes().toString().padStart(2, '0');;
+    
+        return `${year}-${month}-${day}T${hour}:${minutes}`
+    }
 }
