@@ -16,11 +16,11 @@ import { BookingResumeComponent } from '../../components/booking/booking-resume/
 export class BookingsComponent implements OnInit {
   
   bookingList:Booking[] =[];
-
+  menu:string[]=[]
   constructor(private boookingService:BookingService){}
 
   ngOnInit(): void {
-    this.boookingService.getAllBookings().subscribe((data:Booking[]) =>{
+    this.boookingService.getConfirmBookings().subscribe((data:Booking[]) =>{
       this.bookingList = data;
     })
   }

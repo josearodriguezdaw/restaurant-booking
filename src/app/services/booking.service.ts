@@ -10,37 +10,62 @@ export class BookingService {
 
   constructor(private database: Database) {}
 
-   /**
-    * Devuelve todas las reservas existentes.
-    * @returns listado de reservas
-    */
+  /**
+  * Devuelve todas las reservas existentes.
+  * @returns listado de reservas
+  */
   getAllBookings(){
     const bookingRef = ref(this.database,"/bookings");
     
     return listVal(bookingRef) as Observable<Booking[]>
   }
 
-   /**
-    * Borra una reserva existente.
-    * @param bookingId identificador de la reserva a borrar.
-    */
+  /**
+  * Borra una reserva existente.
+  * @param bookingId identificador de la reserva a borrar.
+  */
   remove(bookingId:string){
     const bookingRef = ref(this.database,`/bookings/${bookingId}`);
 
     return remove(bookingRef) as Promise<void>
   }
 
-/**
- * Busca una reserva por su identificador
- * @param id identificador búsqueda
- * @returns una reserva o null si no existe
- */
+  /**
+   * Busca una reserva por su identificador
+   * @param id identificador búsqueda
+   * @returns una reserva o null si no existe
+   */
    getById(id:string):Promise<DataSnapshot>{
     const bookingRef = ref(this.database,`/bookings/${id}`);
 
     return get(bookingRef) as Promise<DataSnapshot>
    }
 
+  /**
+   * Busca una reserva por su identificador empleando el objeto child
+   * @param id identificador búsqueda
+   * @returns una reserva o null si no existe
+   */
+   getChildById(id:string):Promise<DataSnapshot>{
+    const bookingsRef = ref(this.database,"/bookings");
+    const bookingChild = child(bookingsRef,id);
+
+    const comensalesRef = child(bookingChild,"comensales");
+    return get(comensalesRef) as Promise<DataSnapshot>
+   }
+
+   /**
+    * Función que obtiene el hijo llamado "menu" que se encuentra dentro de cada reserva.
+    * @param bookingId 
+    * @returns 
+    */
+   getMenu(bookingId:string):Observable<string[]>{
+    const bookingsRef = ref(this.database,"bookings");
+    const bookingChild = child(bookingsRef,bookingId);
+
+    const comensalesRef = child(bookingChild,"menu");
+    return listVal(comensalesRef) as Observable<string[]>
+   }
 
    /**
     * Crea una nueva reserva o edita una reserva existente.
@@ -50,7 +75,7 @@ export class BookingService {
 
     let bookingRef = ref(this.database,`/bookings/${booking.id}`);
 
-    //Si el id de la reserva está vacío o es 0 significa que es una nueva reserva, por lo que le asignamos un id aleatorio.
+    //Si el id de la reserva está vacío o es 00 significa que es una nueva reserva, por lo que le asignamos un id aleatorio.
     if (booking.id == ""){
         let newBookingRef = ref(this.database,`/bookings`);
 
@@ -67,10 +92,15 @@ export class BookingService {
     return set(bookingRef,booking) as Promise<void>
   
    }
-
+   
+  /**
+   * Devuelve un listado de reservas que tengan como estado el valor "CONFIRM"
+   * @param id identificador búsqueda
+   * @returns una reserva o null si no existe
+   */
    getConfirmBookings(){
     const bookingRef = ref(this.database,"/bookings");
-    const torrentsQuery = query(bookingRef, orderByChild('status'), equalTo("Confirmada"));
+    const torrentsQuery = query(bookingRef, orderByChild('status'), equalTo("CONFIRM"));
 
     return listVal(torrentsQuery) as Observable<Booking[]>
 }
