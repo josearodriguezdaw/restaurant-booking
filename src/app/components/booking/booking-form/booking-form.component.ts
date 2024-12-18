@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { BookingService } from '../../../services/booking.service';
 import { Booking, BookingStatus } from '../../../models/booking.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DataSnapshot } from '@angular/fire/database';
 
 @Component({
   selector: 'app-booking-form',
@@ -15,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class BookingFormComponent implements OnInit{
 
   bookingForm:FormGroup;
+  errors:string|null =null;
 
   constructor(formBuilder:FormBuilder, private bookingService:BookingService, private activeRoute:ActivatedRoute,private router:Router){
     this.bookingForm = formBuilder.group({
@@ -33,25 +35,27 @@ export class BookingFormComponent implements OnInit{
       let strId:string|null = params.get('id');
       if (strId!=null){
         let id = parseInt(strId);
-
-        let findBooking = this.bookingService.getById(id);
-        if(findBooking.data){
-          let booking = findBooking.data;
-          this.bookingForm.setValue({
-            'id': booking.id,
-            'client': booking.client,
-            'phone': booking.phone,
-            'email': booking.email,
-            'persons': booking.persons,
-            'notes': booking.notes,
-            'date': booking.getDateForm(),
-          });
-        }
+        this.bookingService.getById(id).then((data:DataSnapshot)=>{
+          if(data.exists()){
+            let booking:Booking = data.val();
+            console.log(booking)
+            this.bookingForm.setValue({
+              'id': booking.id,
+              'client': booking.client,
+              'phone': booking.phone,
+              'email': booking.email,
+              'persons': booking.persons,
+              'notes': booking.notes,
+              'date': this.bookingService.getDateForm(booking.date),
+            });
+          }
+        })
       }
     });
   }
 
   saveChanges(){
+    this.errors=null;
     if (this.bookingForm.valid){
       let id = this.bookingForm.get("id")?.value;
       let client = this.bookingForm.get("client")?.value;
@@ -63,8 +67,11 @@ export class BookingFormComponent implements OnInit{
       let idNumber = Number.parseFloat(id);
       
       let booking = new Booking(idNumber,client,phone,email,Number.parseFloat(persons),notes,new Date(date),new Date(), BookingStatus.PENDING);
-      this.bookingService.saveBooking(booking);
-      this.router.navigate(["/bookings"]);
+      this.bookingService.saveBooking(booking).then(()=>{
+        this.router.navigate(["/bookings"]);
+      }).catch(()=>{
+        this.errors = "Se ha producido un error al intentar guardar la reserva";
+      });
     }
   }
 }

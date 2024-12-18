@@ -1,6 +1,9 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            <div class="alert alert-danger" role="alert" *ngIf="errors !=null">
+                {{errors}}
+              </div>
             <form [formGroup]="bookingForm" (submit)="saveChanges()">
                 <input type="text" hidden class="form-control" id="id">
                 <div class="form-group">

@@ -20,11 +20,9 @@ export class BookingsComponent implements OnInit {
   constructor(private boookingService:BookingService){}
 
   ngOnInit(): void {
-    this.bookingList = this.getBookings();
-  }
-
-  getBookings(){
-    return this.boookingService.getBookings();
+    this.boookingService.getAllBookings().subscribe(data =>{
+      this.bookingList = data;
+    })
   }
 
 

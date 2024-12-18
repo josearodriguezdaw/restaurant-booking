@@ -1,58 +1,43 @@
 import { Injectable } from '@angular/core';
 import { Booking, BookingStatus } from '../models/booking.model';
-import { filter } from 'rxjs';
+import { filter, Observable } from 'rxjs';
+import { Database, DataSnapshot, get, listVal, objectVal, push, ref, remove, set } from '@angular/fire/database';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookingService {
 
-  bookings:Booking[];
-  constructor() {
-    this.bookings = [new Booking( 1, "Juan Pérez", "+34 600 123 456", "juan.perez@example.com", 4, "Prefiere mesa cerca de la ventana.", new Date("2024-12-15T20:00:00"), new Date("2024-12-01T10:30:00"),BookingStatus.PENDING), 
-      new Booking( 2, "Ana Gómez", "+34 600 654 321", "ana.gomez@example.com", 2, "Celebración de aniversario.", new Date("2024-12-16T19:00:00"), new Date("2024-12-01T11:00:00"),BookingStatus.CONFIRM ),
-      new Booking( 3, "Carlos López", "+34 600 789 012", "carlos.lopez@example.com", 6, "Requiere menú vegetariano.", new Date("2024-12-20T21:00:00"), new Date("2024-12-01T15:45:00"),BookingStatus.PENDING ),
-      new Booking( 4, "María Fernández", "+34 600 345 678", "maria.fernandez@example.com", 3, "Traerá un pastel de cumpleaños.", new Date("2024-12-22T18:30:00"), new Date("2024-12-02T09:15:00"),BookingStatus.PENDING ), 
-      new Booking( 5, "Luis Martínez", "+34 600 567 890", "luis.martinez@example.com", 5, "Mesa en zona tranquila.", new Date("2024-12-18T20:00:00"), new Date("2024-12-02T14:00:00"),BookingStatus.PENDING ),
-      new Booking( 6, "Isabel Morales", "+34 600 901 234", "isabel.morales@example.com", 2, "Alérgica a los frutos secos.", new Date("2024-12-17T19:30:00"), new Date("2024-12-01T16:20:00"),BookingStatus.CONFIRM ), 
-      new Booking( 7, "Miguel Torres", "+34 600 112 233", "miguel.torres@example.com", 8, "Celebración de cena de empresa.", new Date("2024-12-25T22:00:00"), new Date("2024-12-03T09:50:00"),BookingStatus.PENDING ),
-      new Booking( 8, "Sofía Ramírez", "+34 600 223 344", "sofia.ramirez@example.com", 4, "Traerá decoración navideña.", new Date("2024-12-24T21:00:00"), new Date("2024-12-02T13:10:00"),BookingStatus.CONFIRM ), 
-      new Booking( 9, "Pablo Vega", "+34 600 334 455", "pablo.vega@example.com", 3, "Desea silla para bebé.", new Date("2024-12-26T18:45:00"), new Date("2024-12-01T17:30:00"),BookingStatus.PENDING ),
-      new Booking( 10, "Elena Ruiz", "+34 600 445 566", "elena.ruiz@example.com", 6, "Mesa con buena iluminación para fotos.", new Date("2024-12-28T20:30:00"), new Date("2024-12-03T12:40:00"),BookingStatus.CONFIRM )]
-   }
+  constructor(private database: Database) {}
 
    /**
     * Devuelve todas las reservas existentes.
     * @returns listado de reservas
     */
-   getBookings():Booking[]{
-    return this.bookings;
-   }
+  getAllBookings(){
+    const bookingRef = ref(this.database,"/bookings");
+    return listVal(bookingRef) as Observable<Booking[]>
+  }
 
    /**
     * Borra una reserva existente.
     * @param bookingId identificador de la reserva a borrar.
     */
-   remove(bookingId:number){
-    this.bookings = this.bookings.filter((booking:Booking)=>{
-      return bookingId != booking.id;
-    });
-    
-   }
+  remove(bookingId:number){
+    const bookingRef = ref(this.database,`/bookings/${bookingId}`);
+
+    return remove(bookingRef) as Promise<void>
+  }
 
 /**
  * Busca una reserva por su identificador
  * @param id identificador búsqueda
  * @returns una reserva o null si no existe
  */
-   getById(id:number):{data:Booking|null,index:number|null}{
-    let res:{data:Booking|null,index:number|null} = {data:null,index:null}
-    this.bookings.forEach((booking:Booking,index:number)=>{
-        if (id==booking.id){
-          res={data:booking,index:index}
-        }  
-    });
-    return res;
+   getById(id:number):Promise<DataSnapshot>{
+    const bookingRef = ref(this.database,`/bookings/${id}`);
+
+    return get(bookingRef) as Promise<DataSnapshot>
    }
 
 
@@ -62,34 +47,26 @@ export class BookingService {
     */
    saveBooking(booking:Booking){
 
-    let filterByid = this.getById(booking.id);
+    let bookingRef = ref(this.database,`/bookings/${booking.id}`);
 
-
-    if(filterByid.data !=null){
-      //Edita reserava
-      if (filterByid.index !=null){
-        //Modificamos la reserva
-
-        let oldBooking = filterByid.data;
-
-        // Le establecemos a la reserva creada a partir de la edición los 
-        // parámetros que no han sido modificados en el formulario
-        booking.dateCreation = oldBooking.dateCreation
-        booking.status = oldBooking.status
-
-
-        this.bookings[filterByid.index] = booking
-      }
-    }else{
+    //Si el id de la reserva es 0 significa que es una nueva reserva, por lo que le asignamos un id aleatorio.
+    if (booking.id == 0){
         //Crear nueva reserva
-        let idRandom = Math.trunc((Math.random()*1000))
+        let idRandom = push(bookingRef);
 
         //Modificamos el id, que es 0, a un id random
-        booking.id = idRandom;
-        
-        //Lo añadimos al arreglo
-        this.bookings.push(booking);
-      }
+        bookingRef = idRandom;
+    }
+    
+    return set(bookingRef,booking) as Promise<void>
    }
+   getDateForm(date:Date):string{
+    let day = date.getDate().toString().padStart(2, '0');;
+    let month = (date.getMonth()+1).toString().padStart(2, '0');;
+    let year = date.getFullYear();
+    let hour = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');;
 
+    return `${year}-${month}-${day}T${hour}:${minutes}`
+}
 }
