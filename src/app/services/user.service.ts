@@ -3,7 +3,8 @@ import { child, Database, DataSnapshot, get, object, objectVal, push, ref, set }
 import { catchError, from, map, Observable, switchMap } from 'rxjs';
 import { Employee } from '../models/user.model';
 import { AuthService } from './auth.service';
-import { User } from '@angular/fire/auth';
+import { user, User, UserCredential } from '@angular/fire/auth';
+import { Data } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UserService {
   constructor(private database: Database, private authService:AuthService) {}
 
     /**
-     * Busca una reserva por su identificador empleando el objeto child
+     * Busca un usuario por su identificador empleando el objeto child
      * @param id identificador búsqueda
      * @returns una reserva o null si no existe
      */
@@ -24,6 +25,12 @@ export class UserService {
       return objectVal(userRef) as Observable<Employee>
      }
 
+     getUserByIdDataSnapshot(uid:string):Promise<DataSnapshot>{
+      const usersRef = ref(this.database,"users");
+      const userRef = child(usersRef,uid);
+  
+      return get(userRef) as Promise<DataSnapshot>
+     }
      /**
      * Guarda o edita los datos de un nuevo empleado registrado.
      * @param employee reserva a guardar o editar
@@ -67,4 +74,28 @@ export class UserService {
             })
           );
     }
+
+  createIfNotExist(userCredentials:UserCredential): Promise<void>{
+    return this.getUserByIdDataSnapshot(userCredentials.user.uid).then((data: DataSnapshot) => {
+      if (!data.exists()) {
+        // Si el usuario no existe, lo creamos
+        const user = userCredentials.user;
+        const email = user.email != null ? user.email : '';
+        const displayName = user.displayName != null ? user.displayName : '';
+  
+        // Creamos un nuevo objeto Employee
+        const newUser = new Employee(user.uid, email, displayName, '', ['user'], new Date().toLocaleDateString());
+  
+        // Devolvemos la promesa devuelta por saveUser
+        return this.saveUser(newUser);
+      }
+      // Si el usuario ya existe, devolvemos una promesa resuelta
+      return Promise.resolve(); // Si ya existe, no es necesario hacer nada, simplemente resolvemos
+    }).catch((error) => {
+      // Si ocurre un error en cualquier parte, lo registramos y lo propagamos
+      console.error('Error en createIfNotExist:', error);
+      return Promise.reject(error); // Propaga el error
+    });
+  }
 }
+ 

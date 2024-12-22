@@ -30,7 +30,7 @@ export class RoleGuard implements CanActivate {
               if (employee!=null && employee.roles != null && employee.roles.includes(requiredRole)) {
                 return true; // Permitir acceso si el rol coincide
               } else {
-                this.router.navigate(['/home']); // Redirigir si el rol no coincide
+                this.router.navigate(['/configureProfile']); // Redirigir si el rol no coincide
                 return false;
               }
             })
