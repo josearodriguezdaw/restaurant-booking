@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, User } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -38,6 +38,22 @@ export class AuthService {
           observer.error(error);
         }
       );
+    });
+  }
+
+  /**
+   * Obtiene el UID del usuario autenticado.
+   * @returns Promesa que resuelve con el UID o `null` si no hay usuario autenticado.
+   */
+  getUser(): Promise<User | null> {
+    return new Promise((resolve, reject) => {
+      onAuthStateChanged(this.auth, (user: User | null) => {
+        if (user) {
+          resolve(user); // UID del usuario autenticado
+        } else {
+          resolve(null); // No hay usuario autenticado
+        }
+      }, reject);
     });
   }
 

@@ -9,16 +9,17 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { SinginComponent } from './pages/auth/singin/singin.component';
 import { canActivate } from '@angular/fire/auth-guard';
 import { redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+import { RoleGuard } from './guards/role.guard';
 
 
 export const routes: Routes = [
     {path:"home",component:HomeComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
-    {path:"bookings",component:BookingsComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
+    {path:"bookings",component:BookingsComponent, canActivate: [RoleGuard],data: { role: 'user' }},
     {path:"dashboard",component:DashboardComponent,children: [
-        {path:"profile",component:ProfileComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
-        {path:"stats",component:StatsComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))}]
-        ,...canActivate(() => redirectUnauthorizedTo(["login"]))},
-    {path:"edit/:id",component:EditComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
+        {path:"profile",component:ProfileComponent,canActivate: [RoleGuard],data: { role: 'admin' }},
+        {path:"stats",component:StatsComponent,canActivate: [RoleGuard],data: { role: 'admin' }}]
+        ,canActivate: [RoleGuard],data: { role: 'admin' }},
+    {path:"edit/:id",component:EditComponent,canActivate: [RoleGuard],data: { role: 'admin' }},
     {path:"login",component:LoginComponent},
     {path:"singin",component:SinginComponent},
     {path:"",redirectTo:"home",pathMatch:"full"},
