@@ -28,7 +28,7 @@ export class HeaderComponent implements OnInit {
           if(user!=null && user.email){
             this.userService.getUserById(user.uid).subscribe((data:Employee)=>{
               if(data!=null && data.uid !=null){
-                this.role = data.role;
+                this.role = data.roles;
               }
             });
           }

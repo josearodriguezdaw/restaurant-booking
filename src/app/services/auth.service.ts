@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, User } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import { Employee } from '../models/user.model';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +12,9 @@ export class AuthService {
   constructor(private auth: Auth) { 
 
   }
-  register(data:{email:string,password:string}){
-    return createUserWithEmailAndPassword(this.auth, data.email,data.password)
+  register(employee:Employee,password:string){
+
+    return createUserWithEmailAndPassword(this.auth, employee.email,password);
   }
 
   login(data:{email:string,password:string}){

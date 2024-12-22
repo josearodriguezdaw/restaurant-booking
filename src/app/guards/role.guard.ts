@@ -27,7 +27,7 @@ export class RoleGuard implements CanActivate {
           // Si el usuario está autenticado, obtenemos su rol
           return this.userService.getUserById(user.uid).pipe(
             map((employee) => {
-              if (employee!=null && employee.role != null && employee.role.includes(requiredRole)) {
+              if (employee!=null && employee.roles != null && employee.roles.includes(requiredRole)) {
                 return true; // Permitir acceso si el rol coincide
               } else {
                 this.router.navigate(['/home']); // Redirigir si el rol no coincide

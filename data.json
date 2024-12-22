@@ -115,7 +115,7 @@
       "email": "jrodtor967@iescarrillo.es",
       "name": "José Antonio",
       "surname": "Rodríguez",
-      "role": ["admin"],
+      "roles": ["admin"],
       "createdAt": "2024-12-22T10:00:00Z"
     },
     "dvJPWRYPdtUWJ6ylhxNewiAhOV93": {
@@ -123,7 +123,7 @@
       "email": "user@example.com",
       "name": "María",
       "surname": "López",
-      "role": ["admin","user"],
+      "roles": ["admin","user"],
       "createdAt": "2024-12-21T15:30:00Z"
     },
     "0KnV3QpXZJbR8WtLyGoH": {
@@ -131,7 +131,7 @@
       "email": "guest@example.com",
       "name": "Javier",
       "surname": "Pérez",
-      "role": ["user"],
+      "roles": ["user"],
       "createdAt": "2024-12-20T12:45:00Z"
     }
   }

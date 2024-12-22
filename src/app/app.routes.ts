@@ -16,9 +16,9 @@ export const routes: Routes = [
     {path:"home",component:HomeComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
     {path:"bookings",component:BookingsComponent, canActivate: [RoleGuard],data: { role: 'user' }},
     {path:"dashboard",component:DashboardComponent,children: [
-        {path:"profile",component:ProfileComponent,canActivate: [RoleGuard],data: { role: 'admin' }},
-        {path:"stats",component:StatsComponent,canActivate: [RoleGuard],data: { role: 'admin' }}]
-        ,canActivate: [RoleGuard],data: { role: 'admin' }},
+        {path:"profile",component:ProfileComponent,canActivate: [RoleGuard],data: { role: 'user' }},
+        {path:"stats",component:StatsComponent,canActivate: [RoleGuard],data: { role: 'user' }}]
+        ,canActivate: [RoleGuard],data: { role: 'user' }},
     {path:"edit/:id",component:EditComponent,canActivate: [RoleGuard],data: { role: 'admin' }},
     {path:"login",component:LoginComponent},
     {path:"singin",component:SinginComponent},

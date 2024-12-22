@@ -3,15 +3,15 @@ export class Employee {
     name:string;
     surname:string;
     email:string;
-    role:string[];
+    roles:string[];
     createdAt:string;
 
-    constructor( uid: string, email: string, name: string, surname: string, role: string[], createdAt: string ) { 
+    constructor( uid: string, email: string, name: string, surname: string, roles: string[], createdAt: string ) { 
         this.uid = uid; 
         this.email = email; 
         this.name = name; 
         this.surname = surname; 
-        this.role = role; 
+        this.roles = roles; 
         this.createdAt = createdAt; 
     }
 }
