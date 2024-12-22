@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { child, Database, DataSnapshot, get, object, objectVal, push, ref, set } from '@angular/fire/database';
-import { catchError, from, map, Observable, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { Employee } from '../models/user.model';
 import { AuthService } from './auth.service';
 import { user, User, UserCredential } from '@angular/fire/auth';
@@ -25,14 +25,20 @@ export class UserService {
       return objectVal(userRef) as Observable<Employee>
      }
 
+         /**
+     * Busca un usuario por su identificador empleando el objeto child
+     * @param id identificador búsqueda
+     * @returns una reserva o null si no existe
+     */
      getUserByIdDataSnapshot(uid:string):Promise<DataSnapshot>{
       const usersRef = ref(this.database,"users");
       const userRef = child(usersRef,uid);
   
       return get(userRef) as Promise<DataSnapshot>
      }
+
      /**
-     * Guarda o edita los datos de un nuevo empleado registrado.
+     * Guarda o edita los datos de un nuevo usuario registrado.
      * @param employee reserva a guardar o editar
      */
     saveUser(employee:Employee){
@@ -56,6 +62,10 @@ export class UserService {
       return set(employeeRef,employee) as Promise<void>
     
     }
+    /**
+     * Devuelve la información del usuario autenticado
+     * @returns 
+     */
     getUserAuth(): Observable<Employee|null>{
           return from(this.authService.getUser()).pipe(
             switchMap((user) => {
@@ -63,18 +73,23 @@ export class UserService {
                 // Si el usuario está autenticado, obtenemos su rol
                 return this.getUserById(user.uid).pipe(
                   map((employee)=>{return employee}),
-                  catchError(()=>{return [null]})
+                  catchError(()=>{return of(null)})
                 );
               } else {
-                return [null];
+                return of(null);
               }
             }),
             catchError(() => {
-              return [null];
+              return of(null);
             })
           );
     }
 
+  /**
+   * Crea un usuario si no existe cuando se realiza el login usando una cuenta de google
+   * @param userCredentials 
+   * @returns 
+   */
   createIfNotExist(userCredentials:UserCredential): Promise<void>{
     return this.getUserByIdDataSnapshot(userCredentials.user.uid).then((data: DataSnapshot) => {
       if (!data.exists()) {
