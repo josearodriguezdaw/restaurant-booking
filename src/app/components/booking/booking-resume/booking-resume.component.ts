@@ -14,10 +14,14 @@ import { RouterLink } from '@angular/router';
 export class BookingResumeComponent {
   @Input()
   bookingInput:Booking | null = null;
+  errors:string|null = null;
 
   constructor(private bookingService:BookingService){}
 
   removeBooking(bookingId:string):void{
-    this.bookingService.remove(bookingId);
+    this.errors=null;
+    this.bookingService.remove(bookingId).catch(()=>{
+      this.errors="Se ha producido un error al borrar la reserva."
+    });
   }
 }

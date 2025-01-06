@@ -1,28 +1,27 @@
 import { Injectable } from '@angular/core';
 import { child, Database, DataSnapshot, get, object, objectVal, push, ref, set } from '@angular/fire/database';
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
-import { Employee } from '../models/user.model';
 import { AuthService } from './auth.service';
 import { user, User, UserCredential } from '@angular/fire/auth';
-import { Data } from '@angular/router';
+import { Person } from '../models/person.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private database: Database, private authService:AuthService) {}
+  constructor(private database: Database) {}
 
     /**
      * Busca un usuario por su identificador empleando el objeto child
      * @param id identificador búsqueda
      * @returns una reserva o null si no existe
      */
-     getUserById(id:string):Observable<Employee>{
+     getUserById(id:string):Observable<Person>{
       const usersRef = ref(this.database,"users");
       const userRef = child(usersRef,id);
   
-      return objectVal(userRef) as Observable<Employee>
+      return objectVal(userRef) as Observable<Person>
      }
 
          /**
@@ -41,7 +40,7 @@ export class UserService {
      * Guarda o edita los datos de un nuevo usuario registrado.
      * @param employee reserva a guardar o editar
      */
-    saveUser(employee:Employee){
+    saveUser(employee:Person){
   
       let employeeRef = ref(this.database,`/users/${employee.uid}`);
   
@@ -62,28 +61,7 @@ export class UserService {
       return set(employeeRef,employee) as Promise<void>
     
     }
-    /**
-     * Devuelve la información del usuario autenticado
-     * @returns 
-     */
-    getUserAuth(): Observable<Employee|null>{
-          return from(this.authService.getUser()).pipe(
-            switchMap((user) => {
-              if (user && user.uid) {
-                // Si el usuario está autenticado, obtenemos su rol
-                return this.getUserById(user.uid).pipe(
-                  map((employee)=>{return employee}),
-                  catchError(()=>{return of(null)})
-                );
-              } else {
-                return of(null);
-              }
-            }),
-            catchError(() => {
-              return of(null);
-            })
-          );
-    }
+    
 
   /**
    * Crea un usuario si no existe cuando se realiza el login usando una cuenta de google
@@ -99,7 +77,7 @@ export class UserService {
         const displayName = user.displayName != null ? user.displayName : '';
   
         // Creamos un nuevo objeto Employee
-        const newUser = new Employee(user.uid, email, displayName, '', ['user'], new Date().toLocaleDateString());
+        const newUser = new Person(user.uid, email, displayName, '', ['user'], new Date().toLocaleDateString());
   
         // Devolvemos la promesa devuelta por saveUser
         return this.saveUser(newUser);

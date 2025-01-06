@@ -5,9 +5,9 @@ import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
 import { FooterComponent } from '../../../components/footer/footer.component';
 import { HeaderComponent } from '../../../components/header/header.component';
-import { Employee } from '../../../models/user.model';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/person.service';
 import { UserCredential } from '@angular/fire/auth';
+import { Person } from '../../../models/person.model';
 
 @Component({
   selector: 'app-singin',
@@ -35,7 +35,7 @@ export class SinginComponent {
       let surname = this.registerForm.get("surname")?.value;
       let email = this.registerForm.get("email")?.value;
       let password = this.registerForm.get("password")?.value;
-      let employee = new Employee("",email,name,surname,["user","admin"],new Date().toLocaleDateString())
+      let employee = new Person("",email,name,surname,["user","admin"],new Date().toLocaleDateString())
       this.authService.register(employee,password)
       .then((userCredentials:UserCredential)=>{
         this.userService.saveUser(employee).then(()=>{

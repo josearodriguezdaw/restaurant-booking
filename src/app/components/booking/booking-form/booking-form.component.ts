@@ -37,7 +37,7 @@ export class BookingFormComponent implements OnInit{
         this.bookingService.getById(id).then((data:DataSnapshot)=>{
           if(data.exists()){
             let booking:Booking = data.val();
-            console.log(booking)
+            
             this.bookingForm.setValue({
               'id': booking.id,
               'client': booking.client,

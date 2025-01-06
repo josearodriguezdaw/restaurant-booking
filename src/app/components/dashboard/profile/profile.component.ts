@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../../../services/person.service';
+import { CommonModule } from '@angular/common';
+import { Person } from '../../../models/person.model';
 import { AuthService } from '../../../services/auth.service';
 import { User } from '@angular/fire/auth';
-import { UserService } from '../../../services/user.service';
-import { Employee } from '../../../models/user.model';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -13,15 +13,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  
-  constructor(private userService:UserService){}
-  user:Employee|null = null;
+  user:Person|null = null;
+
+  constructor(private authService:AuthService){}
 
   ngOnInit(): void {
-    this.userService.getUserAuth().subscribe((user:Employee|null)=>{
-      if(user!=null){
-        this.user = user;
-      }
+    this.authService.getUserDataAuth().subscribe(({user,person})=>{
+      this.user = person;
     })
   }
 

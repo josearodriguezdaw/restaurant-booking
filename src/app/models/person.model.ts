@@ -1,4 +1,4 @@
-export class Employee {
+export class Person {
     uid:string;
     name:string;
     surname:string;
