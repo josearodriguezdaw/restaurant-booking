@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { UserService } from '../../services/person.service';
 
 @Component({
   selector: 'app-header',
@@ -13,22 +13,14 @@ import { UserService } from '../../services/person.service';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private authService:AuthService, private router:Router,private userService:UserService){}
+  constructor(private authService:AuthService, private router:Router){}
 
   isLoggedIn: boolean = false;
-  roles:string[]|null = null;
-  ngOnInit(): void {
-    this.authService.getUserDataAuth().subscribe(({user,person})=>{
 
-      if(user){
-        this.isLoggedIn = true;
-        if(person && person.email && person.roles){
-          this.roles = person.roles;
-        }
-      }else{
-        this.isLoggedIn=false;
-      }
-    })
+  ngOnInit(): void {
+    this.authService.isAuthenticated().subscribe((authenticated) => {
+      this.isLoggedIn = authenticated;
+    });
   }
 
   logout(){

@@ -50,7 +50,8 @@ export class BookingService {
     const bookingsRef = ref(this.database,"/bookings");
     const bookingChild = child(bookingsRef,id);
 
-    return get(bookingChild) as Promise<DataSnapshot>
+    const comensalesRef = child(bookingChild,"comensales");
+    return get(comensalesRef) as Promise<DataSnapshot>
    }
 
    /**
@@ -75,7 +76,7 @@ export class BookingService {
     let bookingRef = ref(this.database,`/bookings/${booking.id}`);
 
     //Si el id de la reserva está vacío o es 00 significa que es una nueva reserva, por lo que le asignamos un id aleatorio.
-    if (booking.id == "0"){
+    if (booking.id == ""){
         let newBookingRef = ref(this.database,`/bookings`);
 
         //Crear nueva reserva
