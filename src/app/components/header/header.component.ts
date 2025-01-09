@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { PersonService } from '../../services/person.service';
+import { Person } from '../../models/person.model';
+import { DataSnapshot } from '@angular/fire/database';
 
 @Component({
   selector: 'app-header',
@@ -13,15 +16,26 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private authService:AuthService, private router:Router){}
+  constructor(private authService:AuthService, private router:Router, private personService:PersonService){}
 
   isLoggedIn: boolean = false;
+  role:string|null=null;
 
   ngOnInit(): void {
-    this.authService.isAuthenticated().subscribe((authenticated) => {
-      this.isLoggedIn = authenticated;
-    });
-  }
+    
+     this.authService.getUserAuthenticated().subscribe((user:User|null) => { 
+      if(user){
+       this.isLoggedIn = true;
+       this.personService.getUserByUid(user.uid).subscribe((person:Person)=>{
+          if(person){
+            this.role = person.role;
+          }         
+        });
+      }else{
+        this.isLoggedIn=false;
+      }
+     });
+    }
 
   logout(){
     this.authService.logout().then(()=>{
