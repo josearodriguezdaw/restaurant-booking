@@ -7,18 +7,19 @@ import { StatsComponent } from './components/dashboard/stats/stats.component';
 import { EditComponent } from './pages/edit/edit.component';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { SinginComponent } from './pages/auth/singin/singin.component';
-import { canActivate } from '@angular/fire/auth-guard';
+import { AuthGuard, canActivate } from '@angular/fire/auth-guard';
 import { redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+import { authGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
     {path:"home",component:HomeComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
-    {path:"bookings",component:BookingsComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
+    {path:"bookings",component:BookingsComponent,canActivate: [authGuard],data: { role: '*' }},
     {path:"dashboard",component:DashboardComponent,children: [
-        {path:"profile",component:ProfileComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
-        {path:"stats",component:StatsComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))}]
-        ,...canActivate(() => redirectUnauthorizedTo(["login"]))},
-    {path:"edit/:id",component:EditComponent,...canActivate(() => redirectUnauthorizedTo(["login"]))},
+        {path:"profile",component:ProfileComponent,canActivate: [authGuard],data: { role: '*' }},
+        {path:"stats",component:StatsComponent,canActivate: [authGuard],data: { role: '*' }}]
+        ,canActivate: [authGuard],data: { role: '*' }},
+    {path:"edit/:id",component:EditComponent,canActivate: [authGuard],data: { role: 'ADMIN' }},
     {path:"login",component:LoginComponent},
     {path:"singin",component:SinginComponent},
     {path:"",redirectTo:"home",pathMatch:"full"},
