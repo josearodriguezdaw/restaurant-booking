@@ -28,21 +28,6 @@ export class AuthService {
     return signOut(this.auth)
   }
 
-  isAuthenticated(): Observable<boolean> {
-    return new Observable((observer) => {
-      onAuthStateChanged(
-        this.auth,
-        (user) => {
-          observer.next(!!user); // true si hay usuario, false si no
-          observer.complete();
-        },
-        (error) => {
-          observer.error(error);
-        }
-      );
-    });
-  }
-
   getUserAuthenticated(): Observable<User|null> {
     return new Observable((observer) => {
       onAuthStateChanged(
