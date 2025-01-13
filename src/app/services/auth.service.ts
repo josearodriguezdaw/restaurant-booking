@@ -49,7 +49,6 @@ export class AuthService {
         this.auth,
         (user) => {
           observer.next(user);
-          observer.complete();
         },
         (error) => {
           observer.error(error);
@@ -78,7 +77,7 @@ export class AuthService {
   * @returns 
   */
  getUserDataAuth(): Observable<{user:User|null,person:Person|null}>{
-  return from(this.getUserAuthenticated()).pipe(
+  return this.getUserAuthenticated().pipe(
     switchMap((usuario)=>{
       if(usuario && usuario.uid){
         return this.personService.getUserByUid(usuario.uid).pipe(
